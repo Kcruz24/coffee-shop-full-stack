@@ -2,6 +2,7 @@
 venv/
 .vscode/
 test.db
+jwts.txt
 
 # OS generated files #
 ######################
