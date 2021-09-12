@@ -27,15 +27,37 @@ class AuthError(Exception):
 # @TODO implement get_token_auth_header() method
 '''
     it should attempt to get the header from the request
-        it should raise an AuthError if no header is present
+    it should raise an AuthError if no header is present
     it should attempt to split bearer and the token
-        it should raise an AuthError if the header is malformed
+    it should raise an AuthError if the header is malformed
     return the token part of the header
 '''
 
 
 def get_token_auth_header():
-    raise Exception('Not Implemented')
+    if "Authorization" not in request.headers:
+        raise AuthError({
+            'code': 'Authorization not present in headers',
+            'description': 'Unable to get authorization from header'
+        }, 401)
+
+    auth_header = request.headers["Authorization"]
+    auth_header_split = auth_header.split(" ")
+
+    if len(auth_header_split) != 2:
+        raise AuthError({
+            'code': 'header malformed',
+            'description': 'authorization header length not equal to 2'
+        }, 401)
+    elif auth_header_split[0].lower() != "bearer":
+        raise AuthError({
+            'code': 'bearer keyword not found',
+            'description': 'the bearer keyword not found in authorization '
+                           'header'
+        }, 401)
+
+    token = auth_header_split[1]
+    return token
 
 
 # @TODO implement check_permissions(permission, payload) method
