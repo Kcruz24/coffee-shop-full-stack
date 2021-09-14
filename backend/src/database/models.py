@@ -1,4 +1,6 @@
 import os
+
+from flask import jsonify
 from sqlalchemy import Column, String, Integer
 from flask_sqlalchemy import SQLAlchemy
 import json
@@ -68,7 +70,7 @@ class Drink(db.Model):
     '''
 
     def short(self):
-        print(json.loads(self.recipe))
+        print("Recipe:", json.loads(self.recipe))
         short_recipe = [{'color': r['color'], 'parts': r['parts']} for r in
                         json.loads(self.recipe)]
         return {

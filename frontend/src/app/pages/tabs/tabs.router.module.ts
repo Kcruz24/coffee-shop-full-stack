@@ -8,7 +8,7 @@ const routes: Routes = [
     component: TabsPage,
     children: [
       { path: 'drink-menu', loadChildren: '../drink-menu/drink-menu.module#DrinkMenuPageModule' },
-      { path: 'user-page', loadChildren: '../user-page/user-page.module#UserPagePageModule' }, 
+      { path: 'user-page', loadChildren: '../user-page/user-page.module#UserPagePageModule' },
       {
         path: '',
         redirectTo: '/tabs/drink-menu',
