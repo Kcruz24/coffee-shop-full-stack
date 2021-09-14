@@ -70,6 +70,28 @@ def get_drinks():
     indicating reason for failure
 '''
 
+
+@app.route('/drinks-detail')
+@requires_auth('get:drinks-detail')
+def get_drinks_detail(jwt):
+    show_auth_user(jwt)
+
+    try:
+        drinks = Drink.query.all()
+
+        if len(drinks) == 0:
+            abort(404)
+
+        long_drinks = [drink.long() for drink in drinks]
+
+        return jsonify({
+            'success': True,
+            'drinks': long_drinks
+        })
+    except():
+        abort(500)
+
+
 # @TODO implement endpoint
 #     POST /drinks
 '''
