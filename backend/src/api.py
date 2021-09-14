@@ -145,8 +145,35 @@ def post_drinks(jwt):
     status code indicating reason for failure
 '''
 
+
+@app.route('/drinks/<int:drink_id>', methods=['PATCH'])
+@requires_auth('patch:drinks')
+def patch_drinks(jwt, drink_id):
+    show_auth_user(jwt)
+
+    try:
+        body = request.get_json()
+        drink = Drink.query.get_or_404(drink_id)
+
+        if 'title' in body:
+            drink.title = body['title']
+
+        if 'recipe' in body:
+            drink.recipe = json.dumps(body['recipe'])
+
+        drink.update()
+
+        long_updated_drink = drink.long()
+        return jsonify({
+            'success': True,
+            'drinks': [long_updated_drink]
+        })
+    except():
+        abort(500)
+
+
 # @TODO implement endpoint
-#     DELETE /drinks/<id>
+#     DELETE /drinks/<id> (DONE)
 '''
         where <id> is the existing model id
         it should respond with a 404 error if <id> is not found
