@@ -41,8 +41,27 @@ def show_auth_user(jwt):
     indicating reason for failure
 '''
 
+
+@app.route('/drinks')
+def get_drinks():
+    try:
+        drinks = Drink.query.all()
+
+        if len(drinks) == 0:
+            abort(404)
+
+        shortened_drinks = [drink.short() for drink in drinks]
+
+        return jsonify({
+            'success': True,
+            'drinks': shortened_drinks,
+        })
+    except():
+        abort(500)
+
+
 # @TODO implement endpoint
-#     GET /drinks-detail
+#     GET /drinks-detail (DONE)
 '''
         it should require the 'get:drinks-detail' permission
         it should contain the drink.long() data representation
