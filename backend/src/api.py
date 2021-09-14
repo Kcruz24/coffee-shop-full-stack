@@ -11,18 +11,28 @@ app = Flask(__name__)
 setup_db(app)
 CORS(app)
 
-# @TODO uncomment the following line to initialize the datbase
+# @TODO uncomment the following line to initialize the database (DONE)
 '''
 !! NOTE THIS WILL DROP ALL RECORDS AND START YOUR DB FROM SCRATCH
 !! NOTE THIS MUST BE UNCOMMENTED ON FIRST RUN
-!! Running this funciton will add one
+!! Running this function will add one
 '''
+
+
 # db_drop_and_create_all()
+
+
+def show_auth_user(jwt):
+    if jwt['sub'] == 'auth0|613bd58563762c0070c04279':
+        print('MANAGER authenticated!')
+    elif jwt['sub'] == 'auth0|613bd6324fec6d00682b27bd':
+        print('BARISTA authenticated!')
+
 
 # ROUTES
 
 # @TODO implement endpoint
-#     GET /drinks
+#     GET /drinks (DONE)
 '''
         it should be a public endpoint
         it should contain only the drink.short() data representation
