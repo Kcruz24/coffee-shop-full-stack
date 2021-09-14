@@ -24,7 +24,7 @@ class AuthError(Exception):
 # Auth Header
 
 
-# @TODO implement get_token_auth_header() method
+# @TODO implement get_token_auth_header() method (DONE)
 '''
     it should attempt to get the header from the request
     it should raise an AuthError if no header is present
@@ -60,7 +60,7 @@ def get_token_auth_header():
     return token
 
 
-# @TODO implement check_permissions(permission, payload) method
+# @TODO implement check_permissions(permission, payload) method (DONE)
 #     @INPUTS
 #         permission: string permission (i.e. 'post:drink')
 #         payload: decoded jwt payload
@@ -87,7 +87,7 @@ def check_permissions(permission, payload):
         }, 403)
 
 
-# @TODO implement verify_decode_jwt(token) method
+# @TODO implement verify_decode_jwt(token) method (DONE)
 #     @INPUTS
 #         token: a json web token (string)
 '''
@@ -103,17 +103,80 @@ def check_permissions(permission, payload):
 
 
 def verify_decode_jwt(token):
-    raise Exception('Not Implemented')
+    jsonurl = urlopen(f'https://{AUTH0_DOMAIN}/.well-known/jwks.json')
+    jwks = json.loads(jsonurl.read())
+    # print('This is jwks:', jwks)
+
+    unverified_header = jwt.get_unverified_header(token)
+    # print(f"Unverified Header: {unverified_header}")
+
+    rsa_key = {}
+    if 'kid' not in unverified_header:
+        raise AuthError({
+            'code': 'invalid_header',
+            'description': 'Authorization malformed'
+        }, 401)
+
+    for key in jwks['keys']:
+        if key['kid'] == unverified_header['kid']:
+            rsa_key = {
+                'kty': key['kty'],
+                'kid': key['kid'],
+                'use': key['use'],
+                'n': key['n'],
+                'e': key['e']
+            }
+
+    if rsa_key:
+        try:
+            # Use the key to validate the JWT
+            payload = jwt.decode(
+                token,
+                rsa_key,
+                algorithms=ALGORITHMS,
+                audience=API_AUDIENCE,
+                issuer=f'https://{AUTH0_DOMAIN}/'
+            )
+
+            for key, value in payload.items():
+                print(key, ": ", value)
+
+            return payload
+
+        except jwt.ExpiredSignatureError:
+            raise AuthError({
+                'code': 'token_expired',
+                'description': 'Token is expired'
+            }, 401)
+
+        except jwt.JWTClaimsError:
+            raise AuthError({
+                'code': 'invalid_claims',
+                'description': 'Incorrect claims. Please check the audience'
+                               'and issuer'
+            }, 401)
+
+        except Exception:
+            raise AuthError({
+                'code': 'invalid_header',
+                'description': 'Unable to parse authentication token.'
+            }, 400)
+    raise AuthError({
+        'code': 'invalid_header',
+        'description': 'Unable to find the appropriate key'
+    }, 400)
 
 
-# @TODO implement @requires_auth(permission) decorator method
+# @TODO implement @requires_auth(permission) decorator method (DONE)
 #     @INPUTS
 #         permission: string permission (i.e. 'post:drink')
 '''
     it should use the get_token_auth_header method to get the token
     it should use the verify_decode_jwt method to decode the jwt
-    it should use the check_permissions method validate claims and check the requested permission
-    return the decorator which passes the decoded payload to the decorated method
+    it should use the check_permissions method validate claims and check the 
+    requested permission
+    return the decorator which passes the decoded payload to the decorated
+    method
 '''
 
 
