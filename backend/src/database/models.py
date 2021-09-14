@@ -1,9 +1,8 @@
+import json
 import os
 
-from flask import jsonify
-from sqlalchemy import Column, String, Integer
 from flask_sqlalchemy import SQLAlchemy
-import json
+from sqlalchemy import Column, String, Integer
 
 database_filename = "database.db"
 project_dir = os.path.dirname(os.path.abspath(__file__))
@@ -128,7 +127,8 @@ class Drink(db.Model):
             drink.update()
     '''
 
-    def update(self):
+    @staticmethod
+    def update():
         db.session.commit()
 
     def __repr__(self):
